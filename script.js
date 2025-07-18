@@ -9,7 +9,239 @@ document.addEventListener('DOMContentLoaded', function() {
     initBackToTop();
     initHeaderScroll();
     initTypingEffect();
+    initStoriesCarousel();
 });
+
+// Configuración de historias - Aquí puedes agregar nuevas historias fácilmente
+const storiesData = [
+    {
+        id: 'transformando-espacios',
+        title: '🌟 Transformando Espacios, Elevando Experiencias 🌟',
+        date: 'Diciembre 2024',
+        intro: 'Nos complace compartir el impresionante trabajo realizado por nuestro equipo de Aseo de Grupo Delega en la tienda de Provimarket en la hermosa Quinta Región. 🛒✨',
+        folder: 'transformandoespacios',
+        imageCount: 8,
+        description: '📸 En las imágenes pueden ver el lavado y encerado que hemos llevado a cabo, dejando el espacio no solo limpio, sino también brillante y acogedor para todos los clientes. ¡La primera impresión cuenta y estamos aquí para asegurarnos de que sea la mejor!',
+        highlights: {
+            title: '🔧 ¿Por qué elegir Grupo Delega?',
+            items: [
+                'Expertos en Aseo: Nuestro equipo está altamente capacitado y utiliza productos de calidad para garantizar resultados excepcionales.',
+                'Servicios Personalizados: Nos adaptamos a las necesidades específicas de cada cliente, ofreciendo soluciones que se ajustan a su presupuesto y requerimientos.',
+                'Compromiso con la Sostenibilidad: Utilizamos técnicas y productos que son amigables con el medio ambiente, porque cuidar nuestro planeta es una prioridad.'
+            ]
+        },
+        ctaText: 'Contáctanos hoy mismo y descubre cómo podemos ayudarte'
+    }
+    // Aquí puedes agregar más historias siguiendo el mismo formato:
+    /*
+    {
+        id: 'nueva-historia',
+        title: 'Título de la nueva historia',
+        date: 'Mes Año',
+        intro: 'Introducción de la historia...',
+        folder: 'nombre-carpeta-imagenes',
+        imageCount: 6, // Número de imágenes (1.jpg, 2.jpg, etc.)
+        description: 'Descripción detallada...',
+        highlights: {
+            title: 'Puntos destacados:',
+            items: [
+                'Punto 1',
+                'Punto 2',
+                'Punto 3'
+            ]
+        },
+        ctaText: 'Texto del botón de llamada a la acción'
+    }
+    */
+];
+
+// Variables del carrusel
+let currentStoryIndex = 0;
+let autoSlideInterval;
+let currentImageIndex = {}; // Para rastrear la imagen actual de cada historia
+
+// Función para generar el HTML de una historia
+function generateStoryHTML(story, index) {
+    // Inicializar índice de imagen para esta historia
+    currentImageIndex[story.id] = 0;
+    
+    const imagesHTML = Array.from({length: story.imageCount}, (_, i) => {
+        const imageNum = i + 1;
+        const isActive = i === 0 ? 'active' : '';
+        return `<img src="img/historias/${story.folder}/${imageNum}.jpg" alt="Imagen ${imageNum}" class="thumbnail ${isActive}" onclick="changeStoryImage('${story.id}', ${i})" tabindex="0">`;
+    }).join('');
+    
+    const highlightsHTML = story.highlights.items.map(item => `<li>${item}</li>`).join('');
+    
+    return `
+        <div class="story-card" data-story-id="${story.id}">
+            <div class="story-header">
+                <h3 class="story-title">${story.title}</h3>
+                <span class="story-date">${story.date}</span>
+            </div>
+            
+            <div class="story-content">
+                <p class="story-intro">${story.intro}</p>
+                
+                <div class="story-gallery">
+                    <div class="gallery-main">
+                        <img id="mainImage-${story.id}" src="img/historias/${story.folder}/1.jpg" alt="${story.title}" class="main-image">
+                    </div>
+                    <div class="gallery-thumbnails">
+                        ${imagesHTML}
+                    </div>
+                </div>
+                
+                <div class="story-description">
+                     <p>${story.description}</p>
+                     
+                     <div class="story-highlights">
+                         <h4>${story.highlights.title}</h4>
+                         <ul>
+                             ${highlightsHTML}
+                         </ul>
+                     </div>
+                     
+                     <p class="story-final-message">👉 Si buscas un servicio de aseo que no solo cumpla, sino que supere tus expectativas, ¡no dudes en contactarnos! Transformemos juntos tus espacios y brindemos a tus clientes la experiencia que merecen.</p>
+                 </div>
+                 
+                 <div class="story-cta">
+                     <a href="#contacto" class="story-btn">${story.ctaText}</a>
+                 </div>
+            </div>
+        </div>
+    `;
+}
+
+// Función para cambiar imagen dentro de una historia
+function changeStoryImage(storyId, imageIndex) {
+    const story = storiesData.find(s => s.id === storyId);
+    if (!story) return;
+    
+    const mainImage = document.getElementById(`mainImage-${storyId}`);
+    const thumbnails = document.querySelectorAll(`[data-story-id="${storyId}"] .thumbnail`);
+    
+    // Actualizar imagen principal
+    const imageNum = imageIndex + 1;
+    mainImage.src = `img/historias/${story.folder}/${imageNum}.jpg`;
+    
+    // Actualizar thumbnails activos
+    thumbnails.forEach((thumb, index) => {
+        thumb.classList.toggle('active', index === imageIndex);
+    });
+    
+    // Guardar índice actual
+    currentImageIndex[storyId] = imageIndex;
+}
+
+// Función para generar indicadores del carrusel
+function generateIndicators() {
+    return storiesData.map((_, index) => 
+        `<div class="indicator ${index === 0 ? 'active' : ''}" onclick="goToStory(${index})"></div>`
+    ).join('');
+}
+
+// Función para ir a una historia específica
+function goToStory(index) {
+    if (index < 0 || index >= storiesData.length) return;
+    
+    currentStoryIndex = index;
+    updateCarousel();
+    updateIndicators();
+    resetAutoSlide();
+}
+
+// Función para actualizar la posición del carrusel
+function updateCarousel() {
+    const track = document.getElementById('carouselTrack');
+    const translateX = -currentStoryIndex * 100;
+    track.style.transform = `translateX(${translateX}%)`;
+}
+
+// Función para actualizar indicadores
+function updateIndicators() {
+    const indicators = document.querySelectorAll('.indicator');
+    indicators.forEach((indicator, index) => {
+        indicator.classList.toggle('active', index === currentStoryIndex);
+    });
+}
+
+// Función para ir a la siguiente historia
+function nextStory() {
+    currentStoryIndex = (currentStoryIndex + 1) % storiesData.length;
+    updateCarousel();
+    updateIndicators();
+}
+
+// Función para ir a la historia anterior
+function prevStory() {
+    currentStoryIndex = currentStoryIndex === 0 ? storiesData.length - 1 : currentStoryIndex - 1;
+    updateCarousel();
+    updateIndicators();
+}
+
+// Función para iniciar el auto-slide
+function startAutoSlide() {
+    autoSlideInterval = setInterval(nextStory, 7000); // Cambia cada 7 segundos
+}
+
+// Función para resetear el auto-slide
+function resetAutoSlide() {
+    clearInterval(autoSlideInterval);
+    startAutoSlide();
+}
+
+// Función para pausar el auto-slide
+function pauseAutoSlide() {
+    clearInterval(autoSlideInterval);
+}
+
+// Función para inicializar el carrusel de historias
+function initStoriesCarousel() {
+    const carouselTrack = document.getElementById('carouselTrack');
+    const carouselIndicators = document.getElementById('carouselIndicators');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    
+    if (!carouselTrack) return;
+    
+    // Generar HTML de todas las historias
+    carouselTrack.innerHTML = storiesData.map(generateStoryHTML).join('');
+    
+    // Generar indicadores
+    carouselIndicators.innerHTML = generateIndicators();
+    
+    // Agregar event listeners a los botones
+    prevBtn.addEventListener('click', () => {
+        prevStory();
+        resetAutoSlide();
+    });
+    
+    nextBtn.addEventListener('click', () => {
+        nextStory();
+        resetAutoSlide();
+    });
+    
+    // Pausar auto-slide cuando el mouse está sobre el carrusel
+    const carouselContainer = document.querySelector('.carousel-container');
+    carouselContainer.addEventListener('mouseenter', pauseAutoSlide);
+    carouselContainer.addEventListener('mouseleave', startAutoSlide);
+    
+    // Agregar funcionalidad de teclado a las miniaturas
+    document.addEventListener('keydown', function(e) {
+        if (e.target.classList.contains('thumbnail')) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                e.target.click();
+            }
+        }
+    });
+    
+    // Iniciar auto-slide
+    startAutoSlide();
+    
+    console.log(`Carrusel de historias inicializado con ${storiesData.length} historia(s)`);
+}
 
 // Mobile Menu Toggle
 function initMobileMenu() {
@@ -126,11 +358,16 @@ function initAnimations() {
     
     const countObserver = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
                 animateCounter(entry.target);
+                // Dejar de observar después de animar para evitar re-animaciones
+                countObserver.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.5 });
+    }, { 
+        threshold: [0.3, 0.5, 0.7],
+        rootMargin: '0px 0px -50px 0px'
+    });
     
     statNumbers.forEach(stat => {
         countObserver.observe(stat);
@@ -139,28 +376,54 @@ function initAnimations() {
 
 // Counter Animation
 function animateCounter(element) {
-    const target = parseInt(element.textContent.replace(/\D/g, ''));
-    const duration = 2000;
-    const step = target / (duration / 16);
-    let current = 0;
+    // Evitar animaciones duplicadas
+    if (element.dataset.animated === 'true') {
+        return;
+    }
     
-    const timer = setInterval(() => {
-        current += step;
-        if (current >= target) {
-            current = target;
-            clearInterval(timer);
+    element.dataset.animated = 'true';
+    const originalText = element.textContent;
+    const target = parseInt(originalText.replace(/\D/g, ''));
+    
+    if (isNaN(target) || target === 0) {
+        return;
+    }
+    
+    const duration = 2000;
+    const startTime = performance.now();
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Usar easing para una animación más suave
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const current = Math.floor(target * easeOutQuart);
+        
+        // Preservar el formato original (con % o +)
+        if (originalText.includes('%')) {
+            element.textContent = current + '%';
+        } else if (originalText.includes('+')) {
+            element.textContent = current + '+';
+        } else {
+            element.textContent = current;
         }
         
-        // Preserve the original format (with % or +)
-        const originalText = element.textContent;
-        if (originalText.includes('%')) {
-            element.textContent = Math.floor(current) + '%';
-        } else if (originalText.includes('+')) {
-            element.textContent = Math.floor(current) + '+';
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
         } else {
-            element.textContent = Math.floor(current);
+            // Asegurar que llegue al valor final exacto
+            if (originalText.includes('%')) {
+                element.textContent = target + '%';
+            } else if (originalText.includes('+')) {
+                element.textContent = target + '+';
+            } else {
+                element.textContent = target;
+            }
         }
-    }, 16);
+    }
+    
+    requestAnimationFrame(updateCounter);
 }
 
 // Back to Top Button

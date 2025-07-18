@@ -27,7 +27,7 @@
         <nav class="navbar">
             <div class="nav-container">
                 <div class="nav-logo">
-                    <img src="img/logo.png" alt="Grupo Delega" class="logo">
+                    <img src="img/logonav.png" alt="Grupo Delega" class="logo">
                 </div>
                 <ul class="nav-menu">
                     <li class="nav-item">
@@ -47,6 +47,9 @@
                     </li>
                     <li class="nav-item">
                         <a href="#industrias" class="nav-link">Industrias</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#historias" class="nav-link">Historias</a>
                     </li>
                     <li class="nav-item">
                         <a href="#contacto" class="nav-link">Contacto</a>
@@ -135,7 +138,7 @@
                     </div>
                 </div>
                 <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80" alt="Equipo de trabajo" class="about-img">
+                    <img src="./img/mision.jpg" alt="Equipo de trabajo" class="about-img">
                     <div class="about-badge">
                         <i class="fas fa-award"></i>
                         <span>Certificación OS10</span>
@@ -317,6 +320,33 @@
         </div>
     </section>
 
+    <!-- Stories Section -->
+    <section id="historias" class="stories">
+        <div class="container">
+            <h2 class="section-title">Nuestras Historias de Éxito</h2>
+            <p class="section-subtitle">Descubre cómo transformamos espacios y elevamos experiencias</p>
+            
+            <div class="stories-carousel">
+                <div class="carousel-container">
+                    <div class="carousel-track" id="carouselTrack">
+                        <!-- Las historias se generarán dinámicamente aquí -->
+                    </div>
+                    
+                    <button class="carousel-btn prev-btn" id="prevBtn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-btn next-btn" id="nextBtn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div class="carousel-indicators" id="carouselIndicators">
+                    <!-- Los indicadores se generarán dinámicamente aquí -->
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Team Section -->
     <section class="team">
         <div class="container">
@@ -439,7 +469,7 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <div class="footer-logo">
-                        <img src="img/logo.png" alt="Grupo Delega" class="logo">
+                        <img src="img/logo.jpg" alt="Grupo Delega" class="logo">
                     </div>
                     <p class="footer-description">
                         Tu aliado estratégico en gestión integral. Especializados en seguridad privada, 
