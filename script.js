@@ -17,7 +17,7 @@ const storiesData = [
     {
         id: 'transformando-espacios',
         title: '🌟 Transformando Espacios, Elevando Experiencias 🌟',
-        date: 'Diciembre 2024',
+        date: 'Junio 2025',
         intro: 'Nos complace compartir el impresionante trabajo realizado por nuestro equipo de Aseo de Grupo Delega en la tienda de Provimarket en la hermosa Quinta Región. 🛒✨',
         folder: 'transformandoespacios',
         imageCount: 8,
@@ -30,35 +30,37 @@ const storiesData = [
                 'Compromiso con la Sostenibilidad: Utilizamos técnicas y productos que son amigables con el medio ambiente, porque cuidar nuestro planeta es una prioridad.'
             ]
         },
-        ctaText: 'Contáctanos hoy mismo y descubre cómo podemos ayudarte'
-    }
-    // Aquí puedes agregar más historias siguiendo el mismo formato:
-    /*
+        ctaText: 'Contáctanos hoy mismo y descubre cómo podemos ayudarte',
+        finalMessage: '👉 Si buscas un servicio de aseo que no solo cumpla, sino que supere tus expectativas, ¡no dudes en contactarnos! Transformemos juntos tus espacios y brindemos a tus clientes la experiencia que merecen.'
+    },
     {
-        id: 'nueva-historia',
-        title: 'Título de la nueva historia',
-        date: 'Mes Año',
-        intro: 'Introducción de la historia...',
-        folder: 'nombre-carpeta-imagenes',
-        imageCount: 6, // Número de imágenes (1.jpg, 2.jpg, etc.)
-        description: 'Descripción detallada...',
+        id: 'seguridad-preparada',
+        title: '🛡️ Grupo Delega: Seguridad Preparada para Cualquier Desafío',
+        date: 'Enero 2025',
+        intro: 'En Grupo Delega, nuestro equipo de seguridad se destaca por su profesionalismo y preparación para enfrentar diversos desafíos en múltiples sectores.',
+        folder: 'unimarcvinadelmar',
+        imageCount: 12,
+        description: 'Nuestro compromiso con la capacitación continua asegura que estemos listos para actuar eficazmente ante cualquier situación. En Grupo Delega, entendemos que la seguridad es una responsabilidad fundamental, y estamos aquí para proteger lo que más valoras.',
         highlights: {
-            title: 'Puntos destacados:',
+            title: '🎯 Sectores que Atendemos:',
             items: [
-                'Punto 1',
-                'Punto 2',
-                'Punto 3'
+                'Retail: Protección de clientes y empleados',
+                'Bodegas: Seguridad de inventarios y activos',
+                'Centros Educacionales: Ambiente seguro para estudiantes y personal',
+                'Condominios: Vigilancia y gestión de acceso para residentes',
+                'Centros Logísticos: Protección de operaciones y mercancías'
             ]
         },
-        ctaText: 'Texto del botón de llamada a la acción'
+        ctaText: 'Conoce nuestros servicios de seguridad',
+        finalMessage: 'Grupo Delega ofrece servicios de seguridad adaptados a diversos sectores, con un equipo capacitado y comprometido en garantizar un entorno seguro y confiable.'
     }
-    */
 ];
 
 // Variables del carrusel
 let currentStoryIndex = 0;
 let autoSlideInterval;
 let currentImageIndex = {}; // Para rastrear la imagen actual de cada historia
+let isUserInteracting = false; // Para rastrear si el usuario está interactuando
 
 // Función para generar el HTML de una historia
 function generateStoryHTML(story, index) {
@@ -102,7 +104,7 @@ function generateStoryHTML(story, index) {
                          </ul>
                      </div>
                      
-                     <p class="story-final-message">👉 Si buscas un servicio de aseo que no solo cumpla, sino que supere tus expectativas, ¡no dudes en contactarnos! Transformemos juntos tus espacios y brindemos a tus clientes la experiencia que merecen.</p>
+                     <p class="story-final-message">${story.finalMessage}</p>
                  </div>
                  
                  <div class="story-cta">
@@ -182,7 +184,13 @@ function prevStory() {
 
 // Función para iniciar el auto-slide
 function startAutoSlide() {
-    autoSlideInterval = setInterval(nextStory, 7000); // Cambia cada 7 segundos
+    if (!isUserInteracting) {
+        autoSlideInterval = setInterval(() => {
+            if (!isUserInteracting) {
+                nextStory();
+            }
+        }, 12000); // Cambia cada 12 segundos
+    }
 }
 
 // Función para resetear el auto-slide
@@ -224,8 +232,42 @@ function initStoriesCarousel() {
     
     // Pausar auto-slide cuando el mouse está sobre el carrusel
     const carouselContainer = document.querySelector('.carousel-container');
-    carouselContainer.addEventListener('mouseenter', pauseAutoSlide);
-    carouselContainer.addEventListener('mouseleave', startAutoSlide);
+    carouselContainer.addEventListener('mouseenter', () => {
+        isUserInteracting = true;
+        pauseAutoSlide();
+    });
+    carouselContainer.addEventListener('mouseleave', () => {
+        isUserInteracting = false;
+        startAutoSlide();
+    });
+    
+    // Pausar auto-slide cuando hay selección de texto
+    document.addEventListener('selectstart', () => {
+        isUserInteracting = true;
+        pauseAutoSlide();
+    });
+    
+    document.addEventListener('selectionchange', () => {
+        const selection = window.getSelection();
+        if (selection.toString().length === 0) {
+            setTimeout(() => {
+                isUserInteracting = false;
+                startAutoSlide();
+            }, 1000); // Esperar 1 segundo después de deseleccionar
+        }
+    });
+    
+    // Pausar auto-slide cuando se hace clic en elementos interactivos
+    carouselContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('thumbnail') || e.target.closest('.story-content')) {
+            isUserInteracting = true;
+            pauseAutoSlide();
+            setTimeout(() => {
+                isUserInteracting = false;
+                startAutoSlide();
+            }, 3000); // Reanudar después de 3 segundos
+        }
+    });
     
     // Agregar funcionalidad de teclado a las miniaturas
     document.addEventListener('keydown', function(e) {
