@@ -1,12 +1,15 @@
-/* Reset and Base Styles */
+/* Reset and Base Styles with Performance Optimizations */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Performance and accessibility optimizations */
 html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
 }
 
 body {
@@ -14,6 +17,37 @@ body {
     line-height: 1.6;
     color: #333;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Image optimization */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Accessibility improvements for focusable elements */
+a:focus,
+button:focus,
+input:focus,
+textarea:focus {
+    outline: 2px solid #4299e1;
+    outline-offset: 2px;
+}
+
+/* Reduce motion for users with accessibility preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 .container {

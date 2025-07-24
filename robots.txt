@@ -1,0 +1,32 @@
+# Robots.txt para Grupo Delega - Soluciones integrales empresariales & Outsourcing
+# Este archivo complementa las meta tags robots en cada página
+
+# Permitir acceso a todos los robots de búsqueda
+User-agent: *
+Allow: /
+
+# Bloquear acceso a directorios administrativos y archivos sensibles
+Disallow: /enviar.php
+Disallow: /ignore/
+Disallow: /docs/
+Disallow: /instrucciones/
+Disallow: /imagenes/
+
+# Permitir acceso específico a recursos importantes
+Allow: /img/
+Allow: /styles.css
+Allow: /script.js
+Allow: /index.html
+
+# Especificar la ubicación del sitemap
+Sitemap: https://www.grupodelega.cl/sitemap.xml
+
+# Configuración específica para motores de búsqueda principales
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Tiempo de espera entre solicitudes (en segundos)
+Crawl-delay: 1
